@@ -2,8 +2,10 @@ package it.polito.tdp.babs;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.babs.model.CountResult;
 import it.polito.tdp.babs.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +28,7 @@ public class BabsController {
 	private URL location;
 
 	@FXML
-	private DatePicker pickData;
+	private DatePicker pickData;     //Calendario da cui scegliere 
 
 	@FXML
 	private Slider sliderK;
@@ -36,11 +38,46 @@ public class BabsController {
 
 	@FXML
 	void doContaTrip(ActionEvent event) {
-
+		
+		try {                                                      //try/catch MIGLIORIE
+			txtResult.clear();
+			LocalDate date = pickData.getValue();
+			
+			List<CountResult> results = model.getTripCounts(date);
+			
+			if(results==null) {
+				txtResult.appendText("Non ci sono trip per la data selezionata.");
+				return;
+			}
+			
+			for(CountResult cc : results)
+				txtResult.appendText(cc.toString());
+			
+		} catch (RuntimeException e) {                              //Eccezione più specifica possibile
+			txtResult.appendText("Errore di connessione al DB");
+		}
 	}
 
 	@FXML
 	void doSimula(ActionEvent event) {
+		
+		try {
+			txtResult.clear();
+			
+			LocalDate date = pickData.getValue();
+			if(date.getDayOfWeek().getValue() > 4 ) {     //Giorni della settimana da 0 a 6
+				txtResult.setText("Selezionare una data dal lunedì al venerdì!");
+				return;
+			}
+			
+			Double k = sliderK.getValue();
+			
+			model.simula(date, k);
+			
+			
+		} catch (RuntimeException e) {                              
+			txtResult.appendText("Errore di connessione al DB");
+		}
 
 	}
 
