@@ -39,15 +39,24 @@ public class Model {
 		return results;
 	}
 	
+	public List<Station> getStations(){
+		return stations;
+	}
+	
+	public StationIdMap getIdMapStation() {
+		return this.smap;
+	}
+	
 	public List<Trip> getTripsByDate(LocalDate date){
 		return bdao.getAllTrips(date);
 	}
 
-	public void simula(LocalDate date, Double k) {
+	public SimulationResults simula(LocalDate date, Double k) {
 		Simulazione sim = new Simulazione(date, k, this);            //Simulazione in classe a parte
 		
 		sim.run();
 		
+		return sim.getResult();
 	}
 
 }

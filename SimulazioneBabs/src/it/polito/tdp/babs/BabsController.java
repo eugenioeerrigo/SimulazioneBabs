@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import it.polito.tdp.babs.model.CountResult;
 import it.polito.tdp.babs.model.Model;
+import it.polito.tdp.babs.model.SimulationResults;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
@@ -65,14 +66,15 @@ public class BabsController {
 			txtResult.clear();
 			
 			LocalDate date = pickData.getValue();
-			if(date.getDayOfWeek().getValue() > 4 ) {     //Giorni della settimana da 0 a 6
+			if(date.getDayOfWeek().getValue() > 5 ) {     //Giorni della settimana da 0 a 6
 				txtResult.setText("Selezionare una data dal lunedì al venerdì!");
 				return;
 			}
 			
 			Double k = sliderK.getValue();
 			
-			model.simula(date, k);
+			SimulationResults sm = model.simula(date, k);
+			txtResult.appendText(sm.toString());
 			
 			
 		} catch (RuntimeException e) {                              
