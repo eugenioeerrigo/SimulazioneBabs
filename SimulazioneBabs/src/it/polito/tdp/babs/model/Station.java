@@ -55,4 +55,11 @@ public class Station {
 	public void setDockCount(int dockCount) {
 		this.dockCount = dockCount;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	
 }

@@ -2,10 +2,12 @@ package it.polito.tdp.babs;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.babs.model.Model;
+import it.polito.tdp.babs.model.SimulationResults;
 import it.polito.tdp.babs.model.StationNumber;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,18 +48,25 @@ public class BabsController {
 			if(date==null) {
 				txtResult.appendText("Seleziona una data valida");
 				return;
-			}
+			}			
 			
-			txtResult.appendText("Trip in partenza per la data selezionata:\n");
 			List<StationNumber> partenza = model.tripInPartenza(date);
-			for(StationNumber sn : partenza)
-				txtResult.appendText(sn.toString()+"\n");
+			if(partenza.isEmpty())
+				txtResult.appendText("Non sono presenti trips nella data selezionata.\n");
+			else {
 			
-			txtResult.appendText("\nTrip in arrivo per la data selezionata:\n");
-			List<StationNumber> arrivo = model.tripInArrivo(date);
-			for(StationNumber sn : arrivo)
-				txtResult.appendText(sn.toString()+"\n");
-			
+				Collections.sort(partenza);
+				txtResult.appendText("Trip in partenza per la data selezionata:\n");
+				for(StationNumber sn : partenza)
+					txtResult.appendText(sn.toString()+"\n");
+	
+				
+				txtResult.appendText("\nTrip in arrivo per la data selezionata:\n");
+				List<StationNumber> arrivo = model.tripInArrivo(date);
+				Collections.sort(arrivo);
+				for(StationNumber sn : arrivo)
+					txtResult.appendText(sn.toString()+"\n");
+			}
 			
 			
 		}catch(RuntimeException e) {
@@ -67,7 +76,27 @@ public class BabsController {
 
 	@FXML
 	void doSimula(ActionEvent event) {
-
+		txtResult.clear();
+		
+		try{
+			
+			LocalDate date = pickData.getValue();
+			if(date.getDayOfWeek().getValue()<6) {
+			
+			double K = this.sliderK.getValue();
+			SimulationResults res = model.simula(date, K);
+			
+			txtResult.appendText("SIMULAZIONE\nRisultati:\n"+res.toString());
+			
+			}else {
+				txtResult.appendText("Scegli un giorno feriale!");
+			}
+			
+			
+			
+		}catch(RuntimeException e) {
+			txtResult.appendText("Errore nella connessione al DB.");
+		}
 	}
 
 	@FXML

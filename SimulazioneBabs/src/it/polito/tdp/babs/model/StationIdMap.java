@@ -5,20 +5,20 @@ import java.util.Map;
 
 public class StationIdMap {
 	
-	private Map<String, Station> map;
+	private Map<Integer, Station> map;
 	
 	public StationIdMap() {
 		map = new HashMap<>();
 	}
 	
-	public Station get(String name) {
-		return map.get(name);
+	public Station get(int id) {
+		return map.get(id);
 	}
 	
 	public Station get(Station station) {
-		Station old = map.get(station.getName());
+		Station old = map.get(station.getStationID());
 		if(old==null) {
-			map.put(station.getName(), station);
+			map.put(station.getStationID(), station);
 			return station;
 		}
 		return old;

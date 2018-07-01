@@ -1,6 +1,6 @@
 package it.polito.tdp.babs.model;
 
-public class StationNumber {
+public class StationNumber implements Comparable<StationNumber>{
 
 	private Station station;
 	private int number;
@@ -29,6 +29,11 @@ public class StationNumber {
 	@Override
 	public String toString() {
 		return "Station: " + station + " - " + number;
+	}
+
+	@Override
+	public int compareTo(StationNumber arg0) {
+		return Double.compare(this.station.getLat(), arg0.station.getLat());
 	}
 	
 	

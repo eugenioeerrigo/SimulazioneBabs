@@ -79,7 +79,7 @@ public class BabsDAO {
 		List<StationNumber> result = new ArrayList<>();
 		Connection conn = ConnectDB.getConnection();
 		
-		String sql = "SELECT StartStation, COUNT(*) as c FROM trip WHERE DATE(StartDate) = ? GROUP BY StartStation";
+		String sql = "SELECT StartTerminal, COUNT(*) as c FROM trip WHERE DATE(StartDate) = ? GROUP BY StartTerminal ";
 
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
@@ -88,7 +88,7 @@ public class BabsDAO {
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				
-				result.add(new StationNumber(map.get(rs.getString("StartStation")), rs.getInt("c")));
+				result.add(new StationNumber(map.get(rs.getInt("StartTerminal")), rs.getInt("c")));
 			}
 			st.close();
 			conn.close();
@@ -105,7 +105,7 @@ public class BabsDAO {
 		List<StationNumber> result = new ArrayList<>();
 		Connection conn = ConnectDB.getConnection();
 		
-		String sql = "SELECT EndStation, COUNT(*) as c FROM trip WHERE DATE(EndDate) = ? GROUP BY EndStation";
+		String sql = "SELECT EndTerminal, COUNT(*) as c FROM trip WHERE DATE(EndDate) = ? GROUP BY EndTerminal";
 
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
@@ -114,7 +114,7 @@ public class BabsDAO {
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				
-				result.add(new StationNumber(smap.get(rs.getString("StartStation")), rs.getInt("c")));
+				result.add(new StationNumber(smap.get(rs.getInt("EndTerminal")), rs.getInt("c")));
 			}
 			st.close();
 			conn.close();
@@ -125,4 +125,38 @@ public class BabsDAO {
 
 		return result;
 	}
+
+	public List<Trip> getTripsByDate(LocalDate date) {
+		
+		List<Trip> result = new LinkedList<Trip>();
+		Connection conn = ConnectDB.getConnection();
+
+		String sql = "SELECT * FROM trip WHERE DATE(StartDate) = ? ";
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setDate(1, Date.valueOf(date));
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Trip trip = new Trip(rs.getInt("tripid"), 
+									rs.getInt("duration"),
+									rs.getTimestamp("startdate").toLocalDateTime(),
+									rs.getInt("startterminal"),
+									rs.getTimestamp("enddate").toLocalDateTime(),
+									rs.getInt("endterminal"));
+				result.add(trip);
+			}
+			st.close();
+			conn.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error in database query", e);
+		}
+
+		return result;
+	}
+	
+	
 }

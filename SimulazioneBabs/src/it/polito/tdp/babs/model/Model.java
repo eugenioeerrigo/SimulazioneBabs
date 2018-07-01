@@ -14,10 +14,14 @@ public class Model {
 	public Model() {
 		dao = new BabsDAO();
 		smap = new StationIdMap();
+		stations = dao.getAllStations(smap);
 	}
 	
+	public StationIdMap getSmap() {
+		return smap;
+	}
+
 	public List<Station> getStations(){
-		stations = dao.getAllStations(smap);
 		return stations;
 	}
 	
@@ -28,4 +32,18 @@ public class Model {
 	public List<StationNumber> tripInArrivo(LocalDate date) {
 		return dao.tripInArrivo(date, smap);
 	}
+
+	public SimulationResults simula(LocalDate date, double k) {
+		
+		Simulatore sim = new Simulatore(date, k, this);
+		sim.run();
+		
+		return sim.getResults();
+	}
+
+	public List<Trip> getTripsByDate(LocalDate date) {
+		return dao.getTripsByDate(date);
+	}
+	
+	
 }
